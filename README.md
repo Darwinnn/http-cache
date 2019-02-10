@@ -1,17 +1,18 @@
 # http-cache
+
 A pretty fast (~35k rps on my old macbook) KEY/VALUE cache with REST-like API
 
-# Install
-```
+## Install
+
+```bash
 git clone https://github.com/Darwinnn/http-cache
 cd http-cache
 go build
 ```
-<br>
 
-# Run
+## Run
 
-```
+```bash
 ./http-cache --help
 Usage of ./http-cache:
   -addr string
@@ -19,21 +20,39 @@ Usage of ./http-cache:
   -ttl int
     	default time-to-live of cache objects (default 4294967295)
 ```
-<br>
 
-# Usage
+## Run with docker
 
-GET /cache/*key* - get value from cache stored by *key*<br>
-PUT /cache/*key*?ttl=seconds - put value in cache (ttl argument is optional, of ommited the default value is used)<br>
-DELETE /cache/*key* - delete value stored by key<br>
-<br>
-# Examples
-To put a value: <br>
-```curl -X PUT -H "Content-Type: Content-type is also cached" http://localhost:8080/cache/Hello -d "World"```
+### Build a container
 
-<br>To get a value:<br>
-
+```bash
+make docker
 ```
+
+### Start a container
+
+```bash
+docker-compose up -d
+```
+
+## Usage
+
+- *GET* `/cache/`*key* - get value from cache stored by *key*
+- *PUT* `/cache/`*key*`?ttl=seconds` - put value in cache (ttl argument is optional, of ommited the default value is used)
+- *DELETE* `/cache/`*key* - delete value stored by key
+
+
+## Examples
+
+- Put a value:
+
+```bash
+curl -X PUT -H "Content-Type: Content-type is also cached" http://localhost:8080/cache/Hello -d "World"
+```
+
+- Get a value:
+
+```bash
 curl -v http://localhost:8080/cache/Hello
 *   Trying ::1...
 * TCP_NODELAY set
@@ -52,12 +71,14 @@ curl -v http://localhost:8080/cache/Hello
 * Connection #0 to host localhost left intact
 World
 ```
+
 Note that the Content-Type header is also cached, so wichever contet-type is set when PUTting an object, the same will be set when GETting it.
 
-# Benchmarks!
+## Benchmarks
+
 PUT value in cache (this is the slowest method, since it's done in serial, not parallel)
-<br>
-```
+
+```bash
 go/bin/baton -u http://localhost:8080/cache/test -m PUT -b "HELLO" -t 60 -c 100
 Configuring to send PUT requests to: http://localhost:8080/cache/test
 Generating the requests...
@@ -85,9 +106,8 @@ Number of 5xx responses:                            0
 ```
 
 GET value from cache: 
-<br>
 
-```
+```bash
 go/bin/baton -u http://localhost:8080/cache/test -t 60 -c 100
 Configuring to send GET requests to: http://localhost:8080/cache/test
 Generating the requests...
@@ -114,9 +134,9 @@ Number of 5xx responses:                            0
 ===========================================================================
 ```
 
-GET not found key: <br>
+GET not found key:
 
-```
+```bash
 go/bin/baton -u http://localhost:8080/cache/NOT_FOUND -t 60 -c 100
 Configuring to send GET requests to: http://localhost:8080/cache/NOT_FOUND
 Generating the requests...

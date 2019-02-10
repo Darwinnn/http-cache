@@ -1,0 +1,11 @@
+version: '2.4'
+
+services:
+  app:
+    image: http-cache:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
