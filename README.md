@@ -54,3 +54,92 @@ curl -v http://localhost:8080/cache/Hello
 World
 ```
 Note that the Content-Type header is also cached, so wichever contet-type is set when PUTting an object, the same will be set when GETting it.
+
+# Benchmarks!
+PUT value in cache (this is the slowest method, since it's done in serial, not parallel)
+<br>
+```
+go/bin/baton -u http://localhost:8080/cache/test -m PUT -b "HELLO" -t 60 -c 100
+Configuring to send PUT requests to: http://localhost:8080/cache/test
+Generating the requests...
+Finished generating the requests
+Sending the requests to the server...
+Finished sending the requests
+Processing the results...
+
+=========================== Results ========================================
+
+Total requests:                               1625914
+Time taken to complete requests:       1m0.008456565s
+Requests per second:                            27095
+
+========= Percentage of responses by status code ==========================
+
+Number of connection errors:                        0
+Number of 1xx responses:                            0
+Number of 2xx responses:                      1625914
+Number of 3xx responses:                            0
+Number of 4xx responses:                            0
+Number of 5xx responses:                            0
+
+===========================================================================
+```
+
+GET value from cache: 
+<br>
+
+```
+go/bin/baton -u http://localhost:8080/cache/test -t 60 -c 100
+Configuring to send GET requests to: http://localhost:8080/cache/test
+Generating the requests...
+Finished generating the requests
+Sending the requests to the server...
+Finished sending the requests
+Processing the results...
+
+=========================== Results ========================================
+
+Total requests:                               2092374
+Time taken to complete requests:       1m0.004429216s
+Requests per second:                            34870
+
+========= Percentage of responses by status code ==========================
+
+Number of connection errors:                        0
+Number of 1xx responses:                            0
+Number of 2xx responses:                      2092374
+Number of 3xx responses:                            0
+Number of 4xx responses:                            0
+Number of 5xx responses:                            0
+
+===========================================================================
+```
+
+GET not found key: <br>
+
+```
+go/bin/baton -u http://localhost:8080/cache/NOT_FOUND -t 60 -c 100
+Configuring to send GET requests to: http://localhost:8080/cache/NOT_FOUND
+Generating the requests...
+Finished generating the requests
+Sending the requests to the server...
+Finished sending the requests
+Processing the results...
+
+=========================== Results ========================================
+
+Total requests:                               1855883
+Time taken to complete requests:         1m0.0065943s
+Requests per second:                            30928
+
+========= Percentage of responses by status code ==========================
+
+Number of connection errors:                        0
+Number of 1xx responses:                            0
+Number of 2xx responses:                            0
+Number of 3xx responses:                            0
+Number of 4xx responses:                      1855883
+Number of 5xx responses:                            0
+
+===========================================================================
+```
