@@ -1,6 +1,5 @@
 # http-cache
-Pretty darn fast (~30k rps) in-memory cache with REST interface
-
+A pretty fast (~35k rps on my old macbook) KEY/VALUE cache with REST-like API
 
 # Install
 ```
