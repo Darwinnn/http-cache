@@ -21,7 +21,7 @@ func (c *Cache) BuildRouter() *httprouter.Router {
 
 func (c *Cache) getFromCache(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	if val, ok := c.Get(ps.ByName("key")); ok {
-		w.Header().Set("Content", val.Content)
+		w.Header().Set("Content-Type", val.Content)
 		w.Write(val.Data)
 		return
 	}
