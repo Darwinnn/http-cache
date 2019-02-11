@@ -2,7 +2,7 @@ BINARY_NAME=app
 
 .PHONY: all build clean lint docker up up-d
 
-all: dep build
+all: build
 
 build:
 	go build -o ${BINARY_NAME} -v

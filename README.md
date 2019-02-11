@@ -7,14 +7,14 @@ A pretty fast (~35k rps on my old macbook) KEY/VALUE cache with REST-like API
 ```bash
 git clone https://github.com/Darwinnn/http-cache
 cd http-cache
-go build
+make
 ```
 
 ## Run
 
 ```bash
-./http-cache --help
-Usage of ./http-cache:
+./app --help
+Usage of ./app:
   -addr string
     	address to listen on (default ":8080")
   -ttl int
@@ -63,10 +63,9 @@ curl -v http://localhost:8080/cache/Hello
 > Accept: */*
 >
 < HTTP/1.1 200 OK
-< Content: Content-type is also cached
 < Date: Sun, 10 Feb 2019 20:09:33 GMT
 < Content-Length: 5
-< Content-Type: text/plain; charset=utf-8
+< Content-Type: Content-type is also cached
 <
 * Connection #0 to host localhost left intact
 World
