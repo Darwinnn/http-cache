@@ -22,6 +22,7 @@ func (c *Cache) BuildRouter() *httprouter.Router {
 func (c *Cache) getFromCache(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	if val, ok := c.Get(ps.ByName("key")); ok {
 		w.Header().Set("Content-Type", val.Content)
+		w.Header().Set("Content-Length", strconv.Itoa(len(val.Data)))
 		w.Write(val.Data)
 		return
 	}
@@ -55,4 +56,13 @@ func (c *Cache) setFromCache(w http.ResponseWriter, r *http.Request, ps httprout
 
 func (c *Cache) deleteFromCache(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	c.Del(ps.ByName("key"))
+}
+
+func (c *Cache) StartCleanUpWorker() {
+	go func() {
+		for {
+			c.DelExpired()
+			time.Sleep(time.Second)
+		}
+	}()
 }

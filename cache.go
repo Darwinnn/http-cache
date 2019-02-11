@@ -42,3 +42,12 @@ func (c *Cache) Set(key string, value CacheElement) {
 func (c *Cache) Del(key string) {
 	delete(c.Map, key)
 }
+
+// DelExpired deletes all expired items from cache
+func (c *Cache) DelExpired() {
+	for k, v := range c.Map {
+		if v.TTL.Sub(time.Now()) <= 0 {
+			delete(c.Map, k)
+		}
+	}
+}

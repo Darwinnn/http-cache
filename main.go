@@ -25,6 +25,7 @@ func main() {
 		Mutex: &sync.Mutex{},
 		Map:   make(map[string]CacheElement),
 	}
+	cache.StartCleanUpWorker()
 
 	router := cache.BuildRouter()
 
