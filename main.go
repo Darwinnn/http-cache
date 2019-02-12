@@ -26,7 +26,7 @@ func main() {
 
 	// this is the in-mem cache variable that will store all the data
 	var cache Cache
-	//cache.StartCleanUpWorker()
+	cache.StartCleanUpWorker()
 
 	router := cache.BuildRouter()
 
