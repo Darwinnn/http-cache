@@ -1,6 +1,6 @@
 # http-cache
 
-A pretty fast (~35k rps on my old macbook) KEY/VALUE cache with REST-like API
+A fast (~100k rps) HTTP KEY/VALUE database/cache with REST-like API
 
 ## Install
 
@@ -75,11 +75,13 @@ Note that the Content-Type header is also cached, so wichever contet-type is set
 
 ## Benchmarks
 
-PUT value in cache (this is the slowest method, since it's done in serial, not parallel)
+All test are run with 32 byte data, performed on a 4 cores 2.3Ghz i5
+
+PUT value in cache
 
 ```bash
-go/bin/baton -u http://localhost:8080/cache/test -m PUT -b "HELLO" -t 60 -c 100
-Configuring to send PUT requests to: http://localhost:8080/cache/test
+baton -u http://localhost:8080/cache/32b -m PUT -f 32b -c 100 -t 60
+Configuring to send PUT requests to: http://localhost:8080/cache/32b
 Generating the requests...
 Finished generating the requests
 Sending the requests to the server...
@@ -88,15 +90,15 @@ Processing the results...
 
 =========================== Results ========================================
 
-Total requests:                               1625914
-Time taken to complete requests:       1m0.008456565s
-Requests per second:                            27095
+Total requests:                               5899890
+Time taken to complete requests:       1m0.002815914s
+Requests per second:                            98327
 
 ========= Percentage of responses by status code ==========================
 
 Number of connection errors:                        0
 Number of 1xx responses:                            0
-Number of 2xx responses:                      1625914
+Number of 2xx responses:                      5899890
 Number of 3xx responses:                            0
 Number of 4xx responses:                            0
 Number of 5xx responses:                            0
@@ -107,8 +109,8 @@ Number of 5xx responses:                            0
 GET value from cache: 
 
 ```bash
-go/bin/baton -u http://localhost:8080/cache/test -t 60 -c 100
-Configuring to send GET requests to: http://localhost:8080/cache/test
+baton -u http://localhost:8080/cache/32b -c 100 -t 60
+Configuring to send GET requests to: http://localhost:8080/cache/32b
 Generating the requests...
 Finished generating the requests
 Sending the requests to the server...
@@ -117,15 +119,15 @@ Processing the results...
 
 =========================== Results ========================================
 
-Total requests:                               2092374
-Time taken to complete requests:       1m0.004429216s
-Requests per second:                            34870
+Total requests:                               6107886
+Time taken to complete requests:       1m0.001823743s
+Requests per second:                           101795
 
 ========= Percentage of responses by status code ==========================
 
 Number of connection errors:                        0
 Number of 1xx responses:                            0
-Number of 2xx responses:                      2092374
+Number of 2xx responses:                      6107886
 Number of 3xx responses:                            0
 Number of 4xx responses:                            0
 Number of 5xx responses:                            0
@@ -136,8 +138,8 @@ Number of 5xx responses:                            0
 GET not found key:
 
 ```bash
-go/bin/baton -u http://localhost:8080/cache/NOT_FOUND -t 60 -c 100
-Configuring to send GET requests to: http://localhost:8080/cache/NOT_FOUND
+baton -u http://localhost:8080/cache/32b123 -c 100 -t 60
+Configuring to send GET requests to: http://localhost:8080/cache/32b123
 Generating the requests...
 Finished generating the requests
 Sending the requests to the server...
@@ -146,9 +148,9 @@ Processing the results...
 
 =========================== Results ========================================
 
-Total requests:                               1855883
-Time taken to complete requests:         1m0.0065943s
-Requests per second:                            30928
+Total requests:                               6259580
+Time taken to complete requests:       1m0.001837238s
+Requests per second:                           104323
 
 ========= Percentage of responses by status code ==========================
 
@@ -156,7 +158,7 @@ Number of connection errors:                        0
 Number of 1xx responses:                            0
 Number of 2xx responses:                            0
 Number of 3xx responses:                            0
-Number of 4xx responses:                      1855883
+Number of 4xx responses:                      6259580
 Number of 5xx responses:                            0
 
 ===========================================================================
