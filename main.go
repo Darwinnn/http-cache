@@ -27,5 +27,9 @@ func main() {
 	router := cache.BuildRouter()
 
 	log.Printf("Listening on %s\n", addr)
-	log.Fatal(fasthttp.ListenAndServe(addr, router.Handler))
+	server := &fasthttp.Server{
+		MaxRequestBodySize: 0,
+		Handler:            router.Handler,
+	}
+	log.Fatal(server.ListenAndServe(addr))
 }
