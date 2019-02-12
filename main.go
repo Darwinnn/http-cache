@@ -3,8 +3,8 @@ package main
 import (
 	"flag"
 	"log"
-	"net/http"
-	"sync"
+
+	"github.com/valyala/fasthttp"
 )
 
 var (
@@ -21,14 +21,11 @@ func main() {
 	flag.Parse()
 
 	// this is the in-mem cache variable that will store all the data
-	cache := &Cache{
-		Mutex: &sync.Mutex{},
-		Map:   make(map[string]CacheElement),
-	}
-	cache.StartCleanUpWorker()
+	var cache Cache
+	//cache.StartCleanUpWorker()
 
 	router := cache.BuildRouter()
 
 	log.Printf("Listening on %s\n", addr)
-	log.Fatal(http.ListenAndServe(addr, router))
+	log.Fatal(fasthttp.ListenAndServe(addr, router.Handler))
 }

@@ -1,16 +1,15 @@
 package main
 
 import (
-	"io/ioutil"
-	"net/http"
 	"strconv"
 	"time"
 
-	"github.com/julienschmidt/httprouter"
+	"github.com/buaazp/fasthttprouter"
+	"github.com/valyala/fasthttp"
 )
 
-func (c *Cache) BuildRouter() *httprouter.Router {
-	var router = httprouter.New()
+func (c *Cache) BuildRouter() *fasthttprouter.Router {
+	var router = fasthttprouter.New()
 
 	router.GET("/cache/:key", c.getFromCache)
 	router.PUT("/cache/:key", c.setFromCache)
@@ -19,43 +18,33 @@ func (c *Cache) BuildRouter() *httprouter.Router {
 	return router
 }
 
-func (c *Cache) getFromCache(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	if val, ok := c.Get(ps.ByName("key")); ok {
-		w.Header().Set("Content-Type", val.Content)
-		w.Header().Set("Content-Length", strconv.Itoa(len(val.Data)))
-		w.Write(val.Data)
+func (c *Cache) getFromCache(ctx *fasthttp.RequestCtx) {
+	if val, ok := c.Get(ctx.UserValue("key")); ok {
+		ctx.SetContentTypeBytes(val.Content)
+		ctx.Write(val.Data)
 		return
 	}
-	http.Error(w, "Key cache value not found", http.StatusNotFound)
+	ctx.Error("Key cache value not found", 404)
 }
 
-func (c *Cache) setFromCache(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (c *Cache) setFromCache(ctx *fasthttp.RequestCtx) {
 	var ttl int64
-	if ttlVal, err := strconv.Atoi(r.FormValue("ttl")); err == nil {
+	if ttlVal, err := strconv.Atoi(string(ctx.FormValue("ttl"))); err == nil {
 		ttl = int64(ttlVal)
 	} else {
 		ttl = DefaultTTL
 	}
 
-	data, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	elem := CacheElement{
+	c.Set(ctx.UserValue("key"), &CacheElement{
 		TTL:     time.Now().Add(time.Duration(ttl) * time.Second),
-		Data:    data,
-		Content: r.Header.Get("Content-Type"),
-	}
-
-	c.Set(ps.ByName("key"), elem)
-	w.WriteHeader(http.StatusOK)
+		Data:    ctx.Request.Body(),
+		Content: ctx.Request.Header.ContentType(),
+	})
 	return
 }
 
-func (c *Cache) deleteFromCache(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	c.Del(ps.ByName("key"))
+func (c *Cache) deleteFromCache(ctx *fasthttp.RequestCtx) {
+	c.Del(ctx.UserValue("key"))
 }
 
 func (c *Cache) StartCleanUpWorker() {
