@@ -42,5 +42,10 @@ func (c *Cache) Del(key interface{}) {
 
 // DelExpired deletes all expired items from cache
 func (c *Cache) DelExpired() {
-	// TODO
+	c.Map.Range(func(k, v interface{}) bool {
+		if v.(*CacheElement).TTL.Sub(time.Now()) <= 0 {
+			c.Map.Delete(k)
+		}
+		return true
+	})
 }

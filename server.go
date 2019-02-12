@@ -14,7 +14,6 @@ func (c *Cache) BuildRouter() *fasthttprouter.Router {
 	router.GET("/cache/:key", c.getFromCache)
 	router.PUT("/cache/:key", c.setFromCache)
 	router.DELETE("/cache/:key", c.deleteFromCache)
-
 	return router
 }
 
