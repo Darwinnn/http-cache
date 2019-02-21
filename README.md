@@ -1,6 +1,19 @@
 # http-cache
 
-A fast (~100k rps) HTTP KEY/VALUE database/cache with REST-like API
+A fast in-memory REST HTTP key/value database/cache.
+Written with fasthttp and fasthttp-router.
+
+Based on the benchmarks I've run this is capable of delivering around *100000* requests per second, which is probably more than you'd ever need for an app like this.
+
+I build it because I couldn't find an open-source solution for key/value database with REST API.
+
+## The http-cache could be used for:
+
+- Caching large files in RAM and handing them off by native HTTP with low CPU footprint (no RAM-DISKS, no Redis/memcache wrappers are needed)
+- As a key/value database with native HTTP interface (no external libs needed)
+- As a fast file-server for temporary files
+
+Be aware that http-cache does not persist data on disk, so if it's restarted the data is lost.
 
 ## Install
 
@@ -13,12 +26,15 @@ make
 ## Run
 
 ```bash
-./app --help
 Usage of ./app:
   -addr string
-    	address to listen on (default ":8080")
+        address to listen on (default ":8080")
+  -maxsize int
+        maximum upload size (in bytes) (default 4294967295)
+  -memopt
+        Memory optimization (might increase CPU usage)
   -ttl int
-    	default time-to-live of cache objects (default 4294967295)
+        default time-to-live of cache objects (default 4294967295)
 ```
 
 ## Run with docker
