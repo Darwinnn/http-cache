@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"strconv"
 	"time"
 
@@ -20,7 +21,7 @@ func (c *Cache) BuildRouter() *fasthttprouter.Router {
 func (c *Cache) getFromCache(ctx *fasthttp.RequestCtx) {
 	if val, ok := c.Get(ctx.UserValue("key")); ok {
 		ctx.SetContentTypeBytes(val.Content)
-		ctx.Write(val.Data)
+		fmt.Fprint(ctx, val.Data)
 		return
 	}
 	ctx.Error("Key cache value not found", 404)
