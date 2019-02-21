@@ -7,9 +7,9 @@ Based on the benchmarks I've run this is capable of delivering around *100000* r
 
 I build it because I couldn't find an open-source solution for key/value database with REST API.
 
-## The http-cache could be used for:
+## The http-cache could be used for
 
-- Caching large files in RAM and handing them off by native HTTP with low CPU footprint (no RAM-DISKS, no Redis/memcache wrappers are needed)
+- Caching gigabytes of data in RAM and handing them off by native HTTP with low CPU footprint (no RAM-DISKS, no Redis/memcache wrappers are needed)
 - As a key/value database with native HTTP interface (no external libs needed)
 - As a fast file-server for temporary files
 
