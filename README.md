@@ -5,7 +5,7 @@ Written with fasthttp and fasthttp-router.
 
 Based on the benchmarks I've run this is capable of delivering around *100000* requests per second, which is probably more than you'd ever need for an app like this.
 
-I build it because I couldn't find an open-source solution for key/value database with REST API.
+I built it because I couldn't find an open-source solution for key/value database with REST API.
 
 ## The http-cache could be used for
 
